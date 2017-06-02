@@ -193,7 +193,7 @@
 
                 <h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>Android NDK有两种方式构建，一种是使用 ndk-build 脚本方式进行构建，另一种就是本文要使用的方式，cmake</p>
 <p>关于cmake的使用，会另外再写一篇博客进行介绍，本文重点是使用cmake在Android Studio中进行代码构建。</p>
-<p>其中在项目开发中，有可能是中途才引进NDK开发的，我在实际使用中遇到了不少麻烦，这里进行记录，针对一开始使用ndk，和项目中途引进ndk两种方式进行说明。</p>
+<p>其中在项目开发中，有可能是中途才引进NDK开发的，这里进行记录，针对一开始使用ndk，和项目中途引进ndk两种方式进行说明。</p>
 <h2 id="创建项目时，便引入NDK"><a href="#创建项目时，便引入NDK" class="headerlink" title="创建项目时，便引入NDK"></a>创建项目时，便引入NDK</h2><blockquote>
 <p>这种方式是从头开始一个NDK项目，也是大部分博客写入门NDK的一个内容，虽然这个不是本文重点，但是也把过程梳理一遍。</p>
 </blockquote>
@@ -212,6 +212,10 @@
 <p>最后，将所有的库进行一个归总，统一加入到 native-lib 中，这样在 Java 加入动态库的时候，只需要加入 native-lib 就可以了</p>
 <p>现在来run一把，顺便试试刚刚加入的 liblog.so 能不能正常的打印到 logcat 里面<br>当然得修改 native-lib.cpp 让它打印点东西，修改后代码如下<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;android/log.h&gt;</span></span></div><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGD(format, ...) __android_log_print(ANDROID_LOG_DEBUG, <span class="meta-string">"c_debug"</span>, format, ##__VA_ARGS__)</span></div><div class="line"><span class="function">JNIEXPORT jstring JNICALL</span></div><div class="line"><span class="title">Java_paulyung_myapplication_MainActivity_stringFromJNI</span><span class="params">(</span></div><div class="line">        JNIEnv *env,</div><div class="line">        jobject <span class="comment">/* this */</span>) &#123;</div><div class="line"></div><div class="line">	LOGD(<span class="string">"我来自c++"</span>);</div><div class="line"></div><div class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> hello = <span class="string">"Hello from C++"</span>;</div><div class="line">    <span class="keyword">return</span> env-&gt;NewStringUTF(hello.c_str());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>运行结果如下图所示，完美运行<br><img src="1-8.jpg" alt=""><br><img src="1-9.jpg" alt=""></p>
+<h2 id="在项目创建后，再引入NDK"><a href="#在项目创建后，再引入NDK" class="headerlink" title="在项目创建后，再引入NDK"></a>在项目创建后，再引入NDK</h2><p>我们有时候是这样的，刚开始没有使用NDK，但在项目深入到某个阶段时候，不得不使用c/c++代码才能解决问题，这个时候需要使用到NDK了。下面就来说说，怎样在一个已有的项目里面引进NDK<br></p>
+<p>首先同样我们新建一个项目，但是不要勾选c++代码支持<br>创建好后，我们手动创建跟刚刚一样的目录结构，并把刚才的 native-lib.cpp 和 CMakeLists.txt 拷贝过来，然后点击工具栏 File -&gt; Link C++ Project with Gradle ，如下图所示<br><img src="2-1.jpg" alt=""></p>
+<p>在弹出的对话框中选择 CMake 方式，并选择刚刚拷贝过来的 CMakeLists.txt 文件，然后点 OK，等一会后，项目就构建好了<br>然后在 MainActivity 里面调用 stringFromJNI() 方法，运行项目，没有什么问题。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>以上就是两种方式引入NDK开发，为大家利用 AS入门NDK提供了一些思路。但是在实际项目里面，可能会有多个 c/c++ 文件，并且还有 .h 头文件等等，这样的话，应该怎样去写 CMakeLists.txt 呢，又有哪些坑呢，请看下一篇博客，使用NDK开发之利用FFmpeg的rtmp推流本地flv文件到流媒体服务器</p>
 
 
                 <hr>
@@ -220,10 +224,10 @@
 
                 <ul class="pager">
                     
-                    
-                        <li class="next">
-                            <a href="/2017/05/24/关于js的使用/" data-toggle="tooltip" data-placement="top" title="关于js的使用">Next Post &rarr;</a>
+                        <li class="previous">
+                            <a href="/2017/06/02/自定义View之自动换行布局/" data-toggle="tooltip" data-placement="top" title="自定义View之自动换行布局">&larr; Previous Post</a>
                         </li>
+                    
                     
                 </ul>
 

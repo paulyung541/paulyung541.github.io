@@ -13,11 +13,11 @@
 
     <title>
         
-          关于js的使用 - 思源の博客 | Paul&#39;s Blog
+          自定义View之自动换行布局 - 思源の博客 | Paul&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="http://paulyung541.github.io/2017/05/24/关于js的使用/">
+    <link rel="canonical" href="http://paulyung541.github.io/2017/06/02/自定义View之自动换行布局/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -90,6 +90,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archives/">Archives</a>
                         </li>
                         
@@ -98,13 +105,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -155,7 +155,7 @@
 <!-- Post Header -->
 <style type="text/css">
     header.intro-header{
-        background-image: url('http://img2.niutuku.com/desk/130220/23/23-niutuku.com-246.jpg')
+        background-image: url('MataderoBridge.jpg')
     }
 </style>
 <header class="intro-header" >
@@ -165,14 +165,14 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                          <a class="tag" href="/tags/#生活" title="生活">生活</a>
+                          <a class="tag" href="/tags/#自定义View" title="自定义View">自定义View</a>
                         
                     </div>
-                    <h1>关于js的使用</h1>
-                    <h2 class="subheading">观阴阳之开合</h2>
+                    <h1>自定义View之自动换行布局</h1>
+                    <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by Paul Yung on
-                        2017-05-24
+                        2017-06-02
                     </span>
                 </div>
             </div>
@@ -191,9 +191,26 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="纯粹的测试"><a href="#纯粹的测试" class="headerlink" title="纯粹的测试"></a>纯粹的测试</h1><p>试试效果咋样</p>
-<p><img src="http://img.blog.csdn.net/20150315210818959" alt="这是一张图片"></p>
-<table><br>   <tr bgcolor="#FE0000"><br>      <td>option=90</td><br>      <td>2.4m</td><br>      <td>10853</td><br>   </tr><br>   <tr><br>      <td>option=80</td><br>      <td>1.3m</td><br>      <td>10117</td><br>   </tr><br>   <tr><br>      <td>option=70</td><br>      <td>942k</td><br>      <td>9795</td><br>   </tr><br></table>
+                <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>Android入过门的童鞋们都知道，它本身自带的视图有时候是无法满足我们那么多开发需求的，有时候需要我们去自己定义一些视图来丰富手机的交互体验。<br>大家都知道，自定义View无非就是几种情况</p>
+<ul>
+<li>利用已有控件进行组合</li>
+<li>继承 ViewGroup 写布局</li>
+<li>继承 View 画控件</li>
+</ul>
+<p>第一种是最简单的，相当于扩展已有功能，一般情况下是不用自己实现测量绘制等的。<br><br>第二种复杂点，需要自己实现测量和布局，还有可能还要自己支持 <code>wrap_content</code><br><br>第三种是主要实现绘制功能，主要难点在绘制<br></p>
+<p>本文将讲述上述第二种，也就是继承 ViewGroup 的方式，剖析自动换行布局 <code>LaybelLayout</code> 的实现原理。<br><br><a href="https://github.com/paulyung541/LaybelLayout" target="_blank" rel="external">Github项目传送门</a></p>
+<h2 id="LaybelLayout"><a href="#LaybelLayout" class="headerlink" title="LaybelLayout"></a>LaybelLayout</h2><p>继承自 <code>ViewGroup</code> ，主要实现一个功能，那就是不管多少个子View放里面，占满 <code>LaybelLayout</code> 的宽带时，就要自动切换到下一行。子View的宽高都是不确定的，需要这个控件去自动测量和选择换行的标准。效果如下图所示<br><br><img src="1-1.jpg" alt=""></p>
+<p>有几个技术点需要注意一下：<br><br>1，继承自 <code>ViewGroup</code> 的控件，如果不添加 <code>wrap_content</code> 功能，则 <code>wrap_content</code> 和 <code>match_parent</code> 效果是一样的<br><br>2，需要测量子View，和自身的 <code>padding</code> ，和自身的宽度作比较，确定哪些子View在哪些行<br><br>3，需要摆放子View，测量完之后还需要将子View摆放在相应的位置<br><br>4，让子View支持 <code>margin</code> 外边距</p>
+<h3 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h3><p>默认 <code>LaybelLayout</code> 的子View是 TextView，我们外层只需要传一个字符串数组进去就可以了，这也能满足大部分开发的需求了。如果觉得子View只是一个TextView，无法满足需求，可以重写 <code>LaybelLayout</code> 的 <code>public View getView()</code>方法去自定义子View，如果需要设置点击事件，可以设置 <code>LaybelLayout.OnItemClickListener</code> 这个监听</p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><h4 id="margin"><a href="#margin" class="headerlink" title="margin"></a>margin</h4><p>首先要让子View支持外边距 <code>margin</code> ，那么需要让子View的参数设为 <code>ViewGroup.MarginLayoutParams</code> 或者为它的子类，下面代码片段为初始生成 TextView<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mAdapter.getCount(); ++i) &#123;</div><div class="line">    TextView child = <span class="keyword">new</span> TextView(getContext());</div><div class="line">    ViewGroup.MarginLayoutParams params = (MarginLayoutParams) generateDefaultLayoutParams();</div><div class="line">    params.leftMargin = dip2px(<span class="number">5</span>);</div><div class="line">    params.rightMargin = dip2px(<span class="number">5</span>);</div><div class="line">    child.setBackgroundDrawable(getContext().getResources().getDrawable(textBackground));</div><div class="line">    child.setText(mAdapter.getItem(i));</div><div class="line">    mAdapter.onDataSet(child, mAdapter.getItem(i));</div><div class="line">    addView(child, params);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>重点看看布局参数的生成，使用了 <code>generateDefaultLayoutParams()</code> 方法，这个方法为 ViewGroup 的方法，产生的是 <code>ViewGroup.LayoutParams</code> 这个类，它也是所有布局参数的基类，并没有外边距 <code>margin</code> 功能，所以得重写它，让它生成 <code>MarginLayoutParams</code>，只有这个类才有外边距功能，代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> LayoutParams <span class="title">generateDefaultLayoutParams</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> MarginLayoutParams(<span class="keyword">super</span>.generateDefaultLayoutParams());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Measure"><a href="#Measure" class="headerlink" title="Measure"></a>Measure</h4><p>好，<code>LaybelLayout</code> 已经产生了许多子View了，接下来需要作的工作就是测量每个子View的宽和高。先把代码浏览一下，然后稍作解释<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; ++i) &#123;</div><div class="line">    View child = getChildAt(i);</div><div class="line">    measureChild(child, widthMeasureSpec, heightMeasureSpec);</div><div class="line"><span class="comment">//            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0); 这里置为0时候，和 measureChild 是一回事</span></div><div class="line">    MarginLayoutParams layoutParams = (MarginLayoutParams) child.getLayoutParams();</div><div class="line">    <span class="comment">//如果单个View和本控件的padding加起来超过本控件的宽度，则让它的宽度 &lt;= 本控件宽度 - Padding - margin</span></div><div class="line">    <span class="keyword">int</span> defSize = getPaddingLeft() + layoutParams.leftMargin</div><div class="line">            + child.getMeasuredWidth() + layoutParams.rightMargin + getPaddingRight();</div><div class="line">    <span class="keyword">if</span> (defSize &gt; getMeasuredWidth()) &#123;</div><div class="line">        defSize = getMeasuredWidth() - layoutParams.leftMargin</div><div class="line">                - layoutParams.rightMargin - getPaddingLeft() - getPaddingRight();</div><div class="line">        layoutParams.width = defSize;</div><div class="line">        measureChild(child, widthMeasureSpec, heightMeasureSpec);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (!mChildView.contains(child))</div><div class="line">        mChildView.add(child);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>首先我对子View进行了测量。然后就进行判断，如果单个子View的宽度加上内边距已经超出了本控件的宽度，也就是代码里的 <code>defSize &gt; getMeasuredWidth()</code>，此时，需要让这个子View的宽度等于本控件减去内边距之后的宽度，这样才能保证子View的宽度不会超出，才能正常显示完全子View的内容。所以让子View的参数的width直接等于defSize，然后重新测量，这个时候测量的结果就不会超出了。</p>
+<h4 id="layout"><a href="#layout" class="headerlink" title="layout"></a>layout</h4><p>前面已经测量好了每个子View的宽高和本控件的宽高，现在就开始考虑怎么把它摆放在本控件里了。这里说下怎样换行吧。首先要获取子View的宽度，并对子View所占的宽度进行累加，当累加的结果超过了 <code>LaybelLayout</code> 本身的宽度时，则能够确定目前的这个子View是该去下一行了。由于代码有点多，这里就只讲思路。<br><br>重点就是使用 <code>View.layout(int l, int t, int r, int b)</code>，来进行摆放。前面有个问题还没有解决。那就是支持 <code>wrap_content</code> 的问题。<code>wrap_content</code>使用的效果应该是，子View的最大宽度作为本控件的宽度，当我们在摆放的时候，能记录每一行的宽度，把最大的那一行作为 <code>LaybelLayout</code> 的宽度。高度就是所有行高的累加再加上自身的 <code>padding</code>。</p>
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>当子View太多，使得 <code>LaybelLayout</code> 的测量高度超过了屏幕的高度时，最好让它有滑动功能，可以给它外层套一个 <code>ScrollView</code></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一个相对简单的自定义View的例子，写一个这种控件可以掌握测量和摆放这两个难点，还可以掌握添加 <code>wrap_content</code> 的能力</p>
+
 
                 <hr>
 
@@ -201,10 +218,10 @@
 
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/2017/06/01/Android-NDK系列之入门篇/" data-toggle="tooltip" data-placement="top" title="Android-NDK系列之入门篇">&larr; Previous Post</a>
-                        </li>
                     
+                        <li class="next">
+                            <a href="/2017/06/01/Android-NDK系列之入门篇/" data-toggle="tooltip" data-placement="top" title="Android-NDK系列之入门篇">Next Post &rarr;</a>
+                        </li>
                     
                 </ul>
 
@@ -236,7 +253,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#生活" title="生活">生活</a>
+                          <a class="tag" href="/tags/#自定义View" title="自定义View">自定义View</a>
                         
                     </div>
                 </section>
@@ -276,8 +293,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "hexo";
-    var disqus_identifier = "http://paulyung541.github.io/2017/05/24/关于js的使用/";
-    var disqus_url = "http://paulyung541.github.io/2017/05/24/关于js的使用/";
+    var disqus_identifier = "http://paulyung541.github.io/2017/06/02/自定义View之自动换行布局/";
+    var disqus_url = "http://paulyung541.github.io/2017/06/02/自定义View之自动换行布局/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
