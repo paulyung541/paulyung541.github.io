@@ -90,7 +90,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -104,7 +104,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -215,7 +215,10 @@
 <h2 id="在项目创建后，再引入NDK"><a href="#在项目创建后，再引入NDK" class="headerlink" title="在项目创建后，再引入NDK"></a>在项目创建后，再引入NDK</h2><p>我们有时候是这样的，刚开始没有使用NDK，但在项目深入到某个阶段时候，不得不使用c/c++代码才能解决问题，这个时候需要使用到NDK了。下面就来说说，怎样在一个已有的项目里面引进NDK<br></p>
 <p>首先同样我们新建一个项目，但是不要勾选c++代码支持<br>创建好后，我们手动创建跟刚刚一样的目录结构，并把刚才的 native-lib.cpp 和 CMakeLists.txt 拷贝过来，然后点击工具栏 File -&gt; Link C++ Project with Gradle ，如下图所示<br><img src="2-1.jpg" alt=""></p>
 <p>在弹出的对话框中选择 CMake 方式，并选择刚刚拷贝过来的 CMakeLists.txt 文件，然后点 OK，等一会后，项目就构建好了<br>然后在 MainActivity 里面调用 stringFromJNI() 方法，运行项目，没有什么问题。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>以上就是两种方式引入NDK开发，为大家利用 AS入门NDK提供了一些思路。但是在实际项目里面，可能会有多个 c/c++ 文件，并且还有 .h 头文件等等，这样的话，应该怎样去写 CMakeLists.txt 呢，又有哪些坑呢，请看下一篇博客，使用NDK开发之利用FFmpeg的rtmp推流本地flv文件到流媒体服务器</p>
+<h2 id="Gradle配置"><a href="#Gradle配置" class="headerlink" title="Gradle配置"></a>Gradle配置</h2><p>首先是 so 文件的存放位置问题，默认 Gradle 会去 <code>项目主Module/src/main/jniLibs</code> 这个目录去找，但这是可以修改的<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">	</div><div class="line">    ...</div><div class="line">    </div><div class="line">    <span class="keyword">sourceSets</span> &#123;</div><div class="line">        main &#123;</div><div class="line">            jniLibs.srcDirs = [<span class="string">'my_cpp/lib'</span>]     <span class="comment">//设置目标的so存放路径</span></div><div class="line">            jni.srcDirs = [] <span class="comment">//disable automatic ndk-build call</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如果要添加编译参数和限制so的架构，可以使用如下设置<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line"></div><div class="line">	...</div><div class="line">    </div><div class="line">    defaultConfig &#123;</div><div class="line">    </div><div class="line">    	...</div><div class="line">    	externalNativeBuild &#123;</div><div class="line">            cmake &#123;</div><div class="line">                cFlags += <span class="string">"-g -std=c99"</span></div><div class="line">                cFlags += <span class="string">"-DNDEBUG"</span></div><div class="line">                abiFilters <span class="string">'armeabi'</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里使用的是 <code>cFlags</code> 指的是c语言的编译参数 ‘-g -std=c99’ 表示支持调试和使用c99标准。如果要添加不同的架构，可以使用 ‘abiFilters’ 去添加。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>以上就是两种方式引入NDK开发，为大家利用 AS入门NDK提供了一些思路。但是在实际项目里面，可能会有多个 c/c++ 文件，并且还有 .h 头文件等等，这样的话，应该怎样去写 CMakeLists.txt 呢，又有哪些坑呢，请看后续更新。</p>
 
 
                 <hr>
