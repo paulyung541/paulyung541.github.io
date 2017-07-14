@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          简单高效Io操作之Okio - 思源の博客 | Paul&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://paulyung541.github.io/2017/07/06/简单高效Io操作之Okio/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Paul&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="http://paulyung541.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('TOAD_ZH-CN.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#翻译" title="翻译">翻译</a>
+                        
+                    </div>
+                    <h1>简单高效Io操作之Okio</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 杨思源 on
+                        2017-07-06
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="Okio"><a href="#Okio" class="headerlink" title="Okio"></a>Okio</h1><p>Okio 是一个开源库，它补充了 <code>java.io</code> 和 <code>java.nio</code> 的功能，使得数据的获取，存储，操作都变得非常简单。</p>
+<h2 id="ByteStrings-和-Buffers"><a href="#ByteStrings-和-Buffers" class="headerlink" title="ByteStrings 和 Buffers"></a>ByteStrings 和 Buffers</h2><p>Okio 围绕了下面两种类型进行了包装，将许多操作包装成更直截了当的 API：</p>
+<ul>
+<li><a href="http://square.github.io/okio/1.x/okio/okio/ByteString.html" target="_blank" rel="external">ByteString</a> 是一个不变的字节序列（byte数组）。对于字符数据，<code>String</code> 是最基本的。<code>ByteString</code> 可以说是 String 久违的兄弟，它能很方便地操作二进制数据。这个类符合人们的操作习惯和需求：它能够很便捷的将自身编解码成 十六进制String，base64 和 utf-8格式。</li>
+<li><a href="http://square.github.io/okio/1.x/okio/okio/Buffer.html" target="_blank" rel="external">Buffer</a> 是一个可变的字节序列。就像 <code>ArrayList</code> 一样，你不需要事先指定它的大小。你可以像队列一样读写这个缓存：在尾部写数据，这头部读数据。你都不需要去管理数据位置，限制和容量大小。</li>
+</ul>
+<p><code>ByteString</code> 和 <code>Buffer</code> 能够很好的节省 CPU 和内存资源。如果将 <code>utf-8</code> 的字符串编码成 <code>ByteString</code>，它缓存了一个字符串的引用，当你要对它进行解码的时候，它就将这个字符串引用再还给你，所以事实上解码过程啥也没做，就是将原来的字符串再还给你（空间换时间）。</p>
+<p><code>Buffer</code> 是由一条双向循环链表实现的。当你将数据从一个 buffer 移动到另一个的时候，它重新分配片段的所有者，而不是将数据拷贝过去。这个方法对于多线程程序特别有帮助：一个维持网络会话的线程能够和一个工作线程进行无拷贝的数据交换。</p>
+<h2 id="Sources-和-Sinks"><a href="#Sources-和-Sinks" class="headerlink" title="Sources 和 Sinks"></a>Sources 和 Sinks</h2><p>一个 <code>java.io</code> 的优雅设计部分是使流能够进行分层变换，像加密和压缩这些。<code>Okio</code> 有自己的流类型，分别叫做 <a href="http://square.github.io/okio/1.x/okio/okio/Source.html" target="_blank" rel="external">Source</a> 和 <a href="http://square.github.io/okio/1.x/okio/okio/Sink.html" target="_blank" rel="external">Sink</a>.它们分别类似于 <code>InputStream</code> 和 <code>OutputStream</code>，但是有许多关键的不同点：</p>
+<ul>
+<li><strong>Timeouts</strong>： 该流提供了获取超时的IO机制。不像 <code>java.io</code> 的套接字流，<code>read()</code> 和 <code>write()</code> 调用超时执行</li>
+<li><strong>简单实现</strong>：<code>Sources</code> 声明了三个方法：read()，close()，和 timeout().这不会像 <code>available()</code> 或者单字节读取从而造成令人惊奇的结果。</li>
+<li><strong>方便使用</strong>：虽然 <code>Sources</code> 和 <code>Sinks</code> 只有三个方法可以写，但是 <a href="http://square.github.io/okio/1.x/okio/okio/BufferedSource.html" target="_blank" rel="external">BufferedSource</a> 和 <a href="http://square.github.io/okio/1.x/okio/okio/BufferedSink.html" target="_blank" rel="external">BufferedSink</a> 提供了丰富的API给调用者调用。这些接口给你带来了任何地方都会需要的方法。</li>
+<li><strong>没有字符流和字节流的区别</strong>：它们都是数据。都被作为字节，<code>utf-8</code> 字符串，<code>大端</code> 32比特的整形，<code>小端</code> 的短整型；无论你要什么，都不要再用 <code>InputStreamrReader</code> 了！</li>
+<li>测试简单：<code>Buffer</code> 类实现了 <code>BufferedSource</code> 和 <code>BufferedSink</code>，所以你的测试代码非常简单简洁。</li>
+</ul>
+<p><code>Sources</code> 和 <code>Sinks</code> 交互就像 <code>InputStream</code> 和 <code>OutputStream</code>.你可以把任何 <code>Sources</code> 当作 <code>InputStream</code>，并且也能将任何 <code>InputStream</code> 当作 <code>Sources</code>.<code>Sink</code> 和 <code>OutputStream</code> 也是一样。</p>
+<h2 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h2><p>Okio 设计之初是服务于 OKHttp 的压缩，一个在Android端胜任 HTTP + SPDY 的客户端。它已经做好准备去解决新的问题了。</p>
+<h2 id="例子：一个-PNG-图片解码器"><a href="#例子：一个-PNG-图片解码器" class="headerlink" title="例子：一个 PNG 图片解码器"></a>例子：一个 PNG 图片解码器</h2><p>一个解析 PNG 图片文件数据块的练习。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ByteString PNG_HEADER = ByteString.decodeHex(<span class="string">"89504e470d0a1a0a"</span>);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">decodePng</span><span class="params">(InputStream in)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">  <span class="keyword">try</span> (BufferedSource pngSource = Okio.buffer(Okio.source(in))) &#123;</div><div class="line">    ByteString header = pngSource.readByteString(PNG_HEADER.size());</div><div class="line">    <span class="keyword">if</span> (!header.equals(PNG_HEADER)) &#123;</div><div class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">"Not a PNG."</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">      Buffer chunk = <span class="keyword">new</span> Buffer();</div><div class="line"></div><div class="line">      <span class="comment">// Each chunk is a length, type, data, and CRC offset.</span></div><div class="line">      <span class="keyword">int</span> length = pngSource.readInt();</div><div class="line">      String type = pngSource.readUtf8(<span class="number">4</span>);</div><div class="line">      pngSource.readFully(chunk, length);</div><div class="line">      <span class="keyword">int</span> crc = pngSource.readInt();</div><div class="line"></div><div class="line">      decodeChunk(type, chunk);</div><div class="line">      <span class="keyword">if</span> (type.equals(<span class="string">"IEND"</span>)) <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">decodeChunk</span><span class="params">(String type, Buffer chunk)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (type.equals(<span class="string">"IHDR"</span>)) &#123;</div><div class="line">    <span class="keyword">int</span> width = chunk.readInt();</div><div class="line">    <span class="keyword">int</span> height = chunk.readInt();</div><div class="line">    System.out.printf(<span class="string">"%08x: %s %d x %d%n"</span>, chunk.size(), type, width, height);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    System.out.printf(<span class="string">"%08x: %s%n"</span>, chunk.size(), type);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="Okio-强制向下兼容的字节"><a href="#Okio-强制向下兼容的字节" class="headerlink" title="Okio 强制向下兼容的字节"></a>Okio 强制向下兼容的字节</h1><p>Okio 的 <code>BufferedSink</code> 是一个高度抽象的类，用于以字节形式写二进制流和字符流。它设计的初衷是为了替代难用的 JDK 的 <code>java.io.*</code> 和 <code>java.nio.*</code>.如果你没有看过 Okio 的源码，你不会了解 segment 概念的存在。它实现了性能的细节，这对调用者来说是透明的。唯一的例外就是 <code>BufferedSink</code> 的 <code>emitCompleteSegments()</code> 方法。</p>
+<p>这个方法是使字节流向 <code>Sink</code> 的三个方法的其中一部分。它们的区别很微妙，理解它有助于正确的使用和提高吞吐量。</p>
+<p>我们先来看看它们在表现行为上有何不同吧，然后看看每一个是怎样使用的。</p>
+<hr>
+<p><code>flush()</code></p>
+<p><img src="http://jakewharton.com/static/post-image/okio-flush.gif" height="240" width="210" class="float-right"></p>
+<p>Flush(冲洗) 是一个字流操作里面很常见的一个概念，而且它的语义在 Okio 里面并没有改变。调用这个方法会将 <em>所有缓冲区数据</em>  移动到 <code>Sink</code>，然后 <code>Sink</code> 会调用自身的 <code>flush</code>.当 ‘flush()’ 方法返回时，就能保证所有数据已经送到目标 <code>Sink</code>.</p>
+<p>当多个 buffer 在使用的时候，调用 flush() 会在每一个 buffer 清除缓存。调用 flush() 仅仅意味着将移动它们的 segments(每个buffer会有多个 segment) 到链表的下一个节点(buffer)，如上图所示。</p>
+<p>同 <code>java.io.*</code> 一样，每一个 buffer 都需要去分配和管理它们自己的 <code>byte[]</code>.这就意味着，调用 flush() 的结果会导致每一个 buffer 进行数据拷贝操作（因为要移动到链表的下一个节点），也许还会导致它们的扩张（类似于ArrayList）。</p>
+<p>调用 <code>close()</code> 也和 flush() 的操作是类似的，会先将缓冲区数据写到流里面，然后再关闭通道。</p>
+<hr>
+<p><code>emit()</code></p>
+<p><img src="http://jakewharton.com/static/post-image/okio-emit.gif" height="240" width="210" class="float-right"></p>
+<p>调用这个函数和调用 flush() 类似，但是它不会进行递归操作。它会将数据移动到下一个缓冲区，但是下一个缓冲区并不知道要做什么。</p>
+<p>因为 buffer 在 Okio 上开销很小，为了实现方便，就把一些灵活的API包裹进了 <code>BufferedSink</code>，重要的是，不要将一些没有写的数据留给调用 <code>emit()</code> 的 Sink.使用这个方法不用担心数据会递归传递。</p>
+<hr>
+<p><code>emitCompleteSegments()</code></p>
+<p><img src="http://jakewharton.com/static/post-image/okio-emit-complete-segments.gif" height="240" width="210" class="float-right"></p>
+<p>如果你理解了 <code>emit()</code>，你也就理解了 segments  的概念，也就能直接了当的了解这个方法的意思了。它只会将完整的 segments 移动到下一个 Sink.如果你甚至还没有缓存满一个 segment，那么这个方法将什么都不做。</p>
+<p>记住，segment 是 Okio 的实现细节，同时也是一个大小单位。为啥会在这个方法里面暴露它的细节操作呢？</p>
+<p>原因是这样的：这个方法的会保证你的代码里面实际上不会缓存太多字节。当使用 BufferedSink 传输大量数据超过了一定的时间的时候，它能够有助于偶尔往底层 Sink 写一部分数据。这样保证了目标不会因为写数据背负巨大压力。相反，<code>Sink</code> 会用它可选的方式，增加字节处理，并且将信号反馈给数据产生者（）。</p>
+<hr>
+<p>现在我们已经知道这三个方法的作用了，让我们来看看使用它们的例子吧。</p>
+<p><strong>向 websocket 发送信息</strong></p>
+<p>websocket是一个连接到服务器的长连接，用于互相传输数据使用。这些信息序列速度非常快，并且很稀疏。下面是两个用于发送信息的API：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendMessage</span><span class="params">(String content)</span></span>;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendMessage</span><span class="params">(<span class="keyword">byte</span>[] content)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>这个 <code>WebSocket</code> 使用 <code>BufferedSink</code> 封装了 socket 流来发送信息。因为我们不知道下一个信息什么时候来，<code>sendMessage</code> 方法的实现类需要在返回之前调用 <code>flush()</code>.这样才能够保证所有信息都能通过 socket 进行发送。</p>
+<p>如果你调用 <code>emitCompleteSegments()</code> 方法来处理的话，那么缓冲区里总是会遗留一部分数据。如果用 <code>emit()</code>，又不能保证一定有中间的缓冲区。这就是为什么这个例子只能用 <code>flush()</code> 了。</p>
+<p><strong>编码视频到文件</strong></p>
+<p>视频编码是一项 CPU 内存密集使用的进程，并且产生数据非常地连贯。将编码好的数据写入文件让缓冲区使用很小一部分，而且保证低速率设备比如磁盘能够跟上。将编码好的数据放入 <code>BufferedSink</code> 的实现类里面，应该调用 <code>emitCompleteSegments()</code> 来允许大量缓冲区数据移动到目标 <code>Sink</code>，并且启动整个缓冲链。调用 <code>emitCompleteSegments()</code> 的结果将会比 <code>emit()</code> 更合适，因为这会使更多数据进入缓冲区。发送没装满的 segment 有可能会造成错误，因为空字节任然会被到来的数据所使用。</p>
+<p>需要注意的是，<code>emitCompleteSegments()</code>仅仅只会移动到下一个 <code>Sink</code>，而不会导致整条 Sink 链移动（比方说<code>flushCompleteSegments()</code>就可以）。意思就是，如果有中间缓冲区去没有监视自己的大小，并且偶尔调用了这个方法，那么它将会把整个视频数据缓存到缓冲区。</p>
+<p>当视频编码完毕，没有更多数据的时候可以调用 <code>emit()</code> (跟最后一幅图片一样有相同的注意事项)或者 <code>flush()</code>，这样就不会有剩余数据放在缓冲区里面了。</p>
+<p><strong>序列化普通对象为 Json 字符串</strong></p>
+<p>如果我们想要写一个库，使得一个普通对象能序列化为Json字符串，那么我们可能会写出这么一个API：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">toJson</span><span class="params">(Object o, Sink sink)</span></span></div></pre></td></tr></table></figure></p>
+<p>由于 <code>Sink</code> 没有提供很方便的API去操作，它的实现类会把数据缓存到 <code>BufferedSink</code>，用于提供高级接口。</p>
+<p>一旦实现类写完Json表达式到 <code>BufferedSink</code> 之后需要返回时，为了不使缓冲区留下任何数据，则需要调用 <code>emit()</code>，这会将数据写入下一个 <code>Sink</code>，但不会再进一步。精明的读者可能会意识到 <a href="https://github.com/square/moshi" target="_blank" rel="external">Moshi</a>这个基于Okio的Json库了。不像之前假想的 <code>toJson</code> 方法，Moshi 的方法需要直接使用到 <code>BufferedSink</code>.这么做的原因与清除和发射数据没有关系，而是为了和 <code>fromJson</code> 需要 <code>BufferedSource</code> 而对称起来。</p>
+<hr>
+<p>所以 <code>flush()</code>，<code>emit()</code>，和 <code>emitCompleteSegments()</code>这三个方法每个都使用 <code>BufferedSink</code> 用不同的方式移动数据到目标的 <code>Sink</code>.正确的使用这三个方法不会使缓冲区里的数据遗留下数据，也可以按照你的需求移动最少的字节。</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/07/05/从okhttp到Retrofit2功能对照一览/" data-toggle="tooltip" data-placement="top" title="从OKHttp3到Retrofit2功能对照一览">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#翻译" title="翻译">翻译</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="undefined" target="_blank">PaulYung&#39;s Blog</a></li>
+                    
+                        <li><a href="undefined" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                        <li><a href="#" target="_blank">Example Friends</a></li>
+                    
+                        <li><a href="#" target="_blank">It helps SEO</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "hexo";
+    var disqus_identifier = "http://paulyung541.github.io/2017/07/06/简单高效Io操作之Okio/";
+    var disqus_url = "http://paulyung541.github.io/2017/07/06/简单高效Io操作之Okio/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/疯子杨">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/天山的鹿">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/paulyung541">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Paul&#39;s Blog 2017 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://paulyung541.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-49627206-1';
+    var _gaDomain = 'huangxuan.me';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = '4cc1f2d8f3067386cc5cdb626a202900';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="http://paulyung541.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
