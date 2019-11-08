@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          简单玩玩mongoDB - 思源の博客 | Sean&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://paulyung541.github.io/2019/10/27/简单玩玩mongoDB/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Sean&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="http://paulyung541.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('mongo.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#mongoDB" title="mongoDB">mongoDB</a>
+                        
+                    </div>
+                    <h1>简单玩玩mongoDB</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 杨思源 on
+                        2019-10-27
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h1><p>MongoDB 是啥玩意，下面一句话摘自<a href="https://zh.wikipedia.org/wiki/MongoDB" target="_blank" rel="noopener">维基百科</a></p>
+<blockquote>
+<p>MongoDB是一种面向文档的数据库管理系统，用C++等语言撰写而成，以此来解决应用程序开发社区中的大量现实问题。2007年10月，MongoDB由10gen团队所发展。2009年2月首度推出。</p>
+</blockquote>
+<p>下面是<a href="https://www.mongodb.com/what-is-mongodb" target="_blank" rel="noopener">MongoDB官方网站</a>的说明</p>
+<blockquote>
+<p>MongoDB是一个文档数据库，具有所需的可伸缩性和灵活性，可用于所需的查询和索引编制</p>
+</blockquote>
+<h1 id="区别于关系型数据库"><a href="#区别于关系型数据库" class="headerlink" title="区别于关系型数据库"></a>区别于关系型数据库</h1><p>它是个正儿八经的NoSQL，也就是非关系型数据库。众所周知，现代的数据库系统分为两大阵营，一类属于关系型数据库，比如经常用到的MySQL，Oracle就数据这种数据库。而Redis，MongoDB就属于非关系型数据库。</p>
+<p>如果你熟悉MySQL，你可以和它做一个对比，首先对比下结构吧</p>
+<table>
+<thead>
+<tr>
+<th>MySQL</th>
+<th align="left">MongoDB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>database</td>
+<td align="left">db</td>
+</tr>
+<tr>
+<td>table</td>
+<td align="left">collection</td>
+</tr>
+<tr>
+<td>column</td>
+<td align="left">document</td>
+</tr>
+</tbody></table>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>这里在Centos上面进行安装</p>
+<p>首先看看我的Centos的版本信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> cat /etc/centos-release</span><br><span class="line">CentOS Linux release 7.7.1908 (Core)</span><br></pre></td></tr></table></figure>
+
+<p>再看看linux内核版本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> cat /proc/version</span><br><span class="line">Linux version 3.10.0-514.26.2.el7.x86_64 (builder@kbuilder.dev.centos.org) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Jul 4 15:04:05 UTC 2017</span><br></pre></td></tr></table></figure>
+
+<p>ok, 现在我们一步一个脚印，跟着<a href="https://docs.mongodb.com/manual/installation/" target="_blank" rel="noopener">官方安装文档</a>在我们的机器上进行安装<br>mongoDB分为社区版（Community）和企业版（Enterprise），一般我们用社区版就行啦。此时此刻是2019年11月8号，目前最新版本为4.2</p>
+<p>在centos上装软件，当然要用<code>yum</code>这个包管理器啦，自动安装依赖，省事省力，在安装之前，需要添加一个小小的配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> vim /etc/yum.repos.d/mongodb-org-4.2.repo</span><br></pre></td></tr></table></figure>
+
+<p>新建 <code>mongodb-org-4.2.repo</code> 这个文件，然后写入以下内容</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[mongodb-org-4.2]</span></span><br><span class="line"><span class="attr">name</span>=MongoDB Repository</span><br><span class="line"><span class="attr">baseurl</span>=https://repo.mongodb.org/yum/redhat/<span class="variable">$releasever</span>/mongodb-org/<span class="number">4.2</span>/x<span class="number">86_64</span>/</span><br><span class="line"><span class="attr">gpgcheck</span>=<span class="number">1</span></span><br><span class="line"><span class="attr">enabled</span>=<span class="number">1</span></span><br><span class="line"><span class="attr">gpgkey</span>=https://www.mongodb.org/static/pgp/server-<span class="number">4.2</span>.asc</span><br></pre></td></tr></table></figure>
+
+<p>上面的版本号我们是可以进行更改的，<code>$releasever</code> 对应的是我们的centos或redhat的版本，这里会自动去解析，就不用管啦。在这里官方文档说明，次版本号如果是奇数，则为开发版本，不适用于生产环境，比如4.1 </p>
+<p>嗯，好吧，继续。。</p>
+<p>然后下面一行命令即可安装MongoDB咯</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> yum install -y mongodb-org</span><br></pre></td></tr></table></figure>
+
+<p>这里给不熟悉Linux的同学多说一句，因为安装过程会多次出现让你选择<code>[y/N]</code>的时候，而一般情况下都会选择<code>y</code>，所以带上<code>-y</code>参数就会一路绿灯，安装过程就会非常顺滑，然后不用手动去输入<code>y</code>这么麻烦啦</p>
+<p>现在就算安装完毕了，那么我们就将MongoDB的服务启动起来</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> service mongod start</span><br></pre></td></tr></table></figure>
+
+<p>然后看看进程的情况</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> ps aux |grep mongod</span><br><span class="line">mongod    4713  0.2  4.8 1551820 91060 ?       Sl   02:26   2:07 /usr/bin/mongod -f /etc/mongod.conf</span><br></pre></td></tr></table></figure>
+
+<p>mongod 默认监听端口为<code>27017</code>，可以通过查询端口查看进程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> lsof -i:27017</span><br><span class="line">COMMAND  PID   USER   FD   TYPE    DEVICE SIZE/OFF NODE NAME</span><br><span class="line">mongod  4713 mongod   11u  IPv4 465154673      0t0  TCP VM_0_16_centos:27017 (LISTEN)</span><br></pre></td></tr></table></figure>
+
+<p>终于启动起来了，现在来试玩一下，直接在命令行输入<code>mongo</code>命令进入交互环境</p>
+<p><code>mongo</code>客户端使用的是<code>JavaScript</code>作为交互的语言；通过<code>help</code>可以查看怎么使用一些命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">show dbs         # 查看当前的数据库有哪些</span><br><span class="line">use &lt;数据库名&gt;    # 切换数据库;创建数据库也用这个</span><br><span class="line">show collections # 查看当前数据库的集合（就相当于查看MySQL有哪些表）</span><br></pre></td></tr></table></figure>
+
+<p>下面就以一个例子来看看怎么使用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">&gt; use myNewDatabase</span><br><span class="line">switched to db myNewDatabase</span><br><span class="line"></span><br><span class="line">&gt; db.myCollection.insertOne( &#123; <span class="attr">x</span>: <span class="number">1</span> &#125; );</span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">"acknowledged"</span> : <span class="literal">true</span>,</span><br><span class="line">	<span class="string">"insertedId"</span> : ObjectId(<span class="string">"5dc53a6cbf81965b45e6344a"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&gt; db.myCollection.find().pretty() <span class="comment">// db.集合名称.find()</span></span><br><span class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"5dc53a6cbf81965b45e6344a"</span>), <span class="string">"x"</span> : <span class="number">1</span> &#125;</span><br><span class="line"></span><br><span class="line">&gt; db.myCollection.insertOne( &#123; <span class="attr">x</span>: <span class="number">2</span> &#125; ); <span class="comment">// 再来一个</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">"acknowledged"</span> : <span class="literal">true</span>,</span><br><span class="line">	<span class="string">"insertedId"</span> : ObjectId(<span class="string">"5dc53b1dbf81965b45e6344b"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&gt; db.myCollection.insertOne( &#123; <span class="attr">x</span>: <span class="number">1</span>, <span class="attr">y</span>: <span class="number">2</span> &#125; ); <span class="comment">// 插入不同字段，这里就体现出了MongoDB的优越性，每行记录字段不一定一致，避免了修改表字段的尴尬</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">"acknowledged"</span> : <span class="literal">true</span>,</span><br><span class="line">	<span class="string">"insertedId"</span> : ObjectId(<span class="string">"5dc53b88bf81965b45e6344c"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&gt; db.myCollection.find().pretty()</span><br><span class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"5dc53a6cbf81965b45e6344a"</span>), <span class="string">"x"</span> : <span class="number">1</span> &#125;</span><br><span class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"5dc53b1dbf81965b45e6344b"</span>), <span class="string">"x"</span> : <span class="number">2</span> &#125;</span><br><span class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"5dc53b88bf81965b45e6344c"</span>), <span class="string">"x"</span> : <span class="number">1</span>, <span class="string">"y"</span> : <span class="number">2</span> &#125;</span><br><span class="line"></span><br><span class="line">&gt; db.myCollection.find(&#123;<span class="attr">y</span>: <span class="number">2</span>&#125;).pretty() <span class="comment">// 带查询条件的查询</span></span><br><span class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"5dc53b88bf81965b45e6344c"</span>), <span class="string">"x"</span> : <span class="number">1</span>, <span class="string">"y"</span> : <span class="number">2</span> &#125;</span><br><span class="line"></span><br><span class="line">&gt; db.myCollection.insertOne( &#123; <span class="attr">name</span>: <span class="string">"xiao"</span>, <span class="attr">info</span>: &#123;<span class="attr">age</span>: <span class="number">24</span>, <span class="attr">sex</span>: <span class="string">"男"</span>&#125;&#125; ); <span class="comment">// 插入个复杂点的数据</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">"acknowledged"</span> : <span class="literal">true</span>,</span><br><span class="line">	<span class="string">"insertedId"</span> : ObjectId(<span class="string">"5dc53c97bf81965b45e6344d"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&gt; db.myCollection.find(&#123;<span class="attr">name</span>: <span class="string">"xiao"</span>&#125;).pretty()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">"_id"</span> : ObjectId(<span class="string">"5dc53c97bf81965b45e6344d"</span>),</span><br><span class="line">	<span class="string">"name"</span> : <span class="string">"xiao"</span>,</span><br><span class="line">	<span class="string">"info"</span> : &#123;</span><br><span class="line">		<span class="string">"age"</span> : <span class="number">24</span>,</span><br><span class="line">		<span class="string">"sex"</span> : <span class="string">"男"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/07/06/简单高效Io操作之Okio/" data-toggle="tooltip" data-placement="top" title="简单高效Io操作之Okio">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#mongoDB" title="mongoDB">mongoDB</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank">SeanYang&#39;s Blog</a></li>
+                    
+                        <li><a href="" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                        <li><a href="#" target="_blank">Example Friends</a></li>
+                    
+                        <li><a href="#" target="_blank">It helps SEO</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "hexo";
+    var disqus_identifier = "http://paulyung541.github.io/2019/10/27/简单玩玩mongoDB/";
+    var disqus_url = "http://paulyung541.github.io/2019/10/27/简单玩玩mongoDB/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/疯子杨">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/天山的鹿">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/paulyung541">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Sean&#39;s Blog 2019 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://paulyung541.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-49627206-1';
+    var _gaDomain = 'huangxuan.me';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = '4cc1f2d8f3067386cc5cdb626a202900';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="http://paulyung541.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

@@ -2,18 +2,18 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="keyword"  content="">
+    <meta name="description" content>
+    <meta name="keyword" content>
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>
         
-          Android-NDK系列之入门篇 - 思源の博客 | Paul&#39;s Blog
+          Android-NDK系列之入门篇 - 思源の博客 | Sean&#39;s Blog
         
     </title>
 
@@ -67,7 +67,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Paul&#39;s Blog</a>
+            <a class="navbar-brand" href="/">Sean&#39;s Blog</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -97,14 +97,14 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -171,7 +171,7 @@
                     <h1>Android-NDK系列之入门篇</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
-                        Posted by Paul Yung on
+                        Posted by Sean Yung on
                         2017-06-01
                     </span>
                 </div>
@@ -197,26 +197,33 @@
 <h2 id="创建项目时，便引入NDK"><a href="#创建项目时，便引入NDK" class="headerlink" title="创建项目时，便引入NDK"></a>创建项目时，便引入NDK</h2><blockquote>
 <p>这种方式是从头开始一个NDK项目，也是大部分博客写入门NDK的一个内容，虽然这个不是本文重点，但是也把过程梳理一遍。</p>
 </blockquote>
-<p>新建项目，并选中对c++的支持<br><img src="1-1.png" alt=""></p>
-<p>新建完成之后，AS 自动帮我们生成了一套例子，是使用Cmake的方式，下面是目录结构<br><img src="1-2.png" alt=""> </p>
-<p>可以看到，AS 帮我们生成了cpp目录，和一个 CMakeLists.txt，这个是cmake的构建脚本<br><img src="1-4.jpg" alt=""></p>
-<p>现在来看看 MainActivity ，拥有了一个 native 方法，目的是调用 c++ 代码，并传回来一个 String<br><img src="1-5.png" alt=""></p>
-<p>再来看看 c++ 代码，直接返回了一个字符串<br><img src="1-6.png" alt=""></p>
+<p>新建项目，并选中对c++的支持<br><img src="1-1.png" alt></p>
+<p>新建完成之后，AS 自动帮我们生成了一套例子，是使用Cmake的方式，下面是目录结构<br><img src="1-2.png" alt> </p>
+<p>可以看到，AS 帮我们生成了cpp目录，和一个 CMakeLists.txt，这个是cmake的构建脚本<br><img src="1-4.jpg" alt></p>
+<p>现在来看看 MainActivity ，拥有了一个 native 方法，目的是调用 c++ 代码，并传回来一个 String<br><img src="1-5.png" alt></p>
+<p>再来看看 c++ 代码，直接返回了一个字符串<br><img src="1-6.png" alt></p>
 <p>现在重点来啦，CMakeLists.txt 是 CMake 用来跨平台构建 c/c++ 代码的脚本，也就是相当于 Java 里的 ant 或者 Android 里的 Gradle 差不多<br>去掉了一些不必要的注释，刚刚创建的项目的 CMakeLists.txt 文件如下所示</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.4</span>.<span class="number">1</span>)</div><div class="line"></div><div class="line"><span class="keyword">add_library</span>( <span class="comment"># Sets the name of the library.</span></div><div class="line">             native-lib</div><div class="line"></div><div class="line">             <span class="comment"># Sets the library as a shared library.</span></div><div class="line">             SHARED</div><div class="line"></div><div class="line">             <span class="comment"># Provides a relative path to your source file(s).</span></div><div class="line">             src/main/cpp/native-lib.cpp )</div><div class="line"></div><div class="line"><span class="keyword">find_library</span>( <span class="comment"># Sets the name of the path variable.</span></div><div class="line">              log-lib</div><div class="line"></div><div class="line">              <span class="comment"># Specifies the name of the NDK library that</span></div><div class="line">              <span class="comment"># you want CMake to locate.</span></div><div class="line">              log )</div><div class="line"></div><div class="line"><span class="keyword">target_link_libraries</span>( <span class="comment"># Specifies the target library.</span></div><div class="line">                       native-lib</div><div class="line"></div><div class="line">                       <span class="comment"># Links the target library to the log library</span></div><div class="line">                       <span class="comment"># included in the NDK.</span></div><div class="line">                       <span class="variable">$&#123;log-lib&#125;</span> )</div></pre></td></tr></table></figure>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.4</span>.<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_library</span>( <span class="comment"># Sets the name of the library.</span></span><br><span class="line">             native-lib</span><br><span class="line"></span><br><span class="line">             <span class="comment"># Sets the library as a shared library.</span></span><br><span class="line">             SHARED</span><br><span class="line"></span><br><span class="line">             <span class="comment"># Provides a relative path to your source file(s).</span></span><br><span class="line">             src/main/cpp/native-lib.cpp )</span><br><span class="line"></span><br><span class="line"><span class="keyword">find_library</span>( <span class="comment"># Sets the name of the path variable.</span></span><br><span class="line">              log-lib</span><br><span class="line"></span><br><span class="line">              <span class="comment"># Specifies the name of the NDK library that</span></span><br><span class="line">              <span class="comment"># you want CMake to locate.</span></span><br><span class="line">              log )</span><br><span class="line"></span><br><span class="line"><span class="keyword">target_link_libraries</span>( <span class="comment"># Specifies the target library.</span></span><br><span class="line">                       native-lib</span><br><span class="line"></span><br><span class="line">                       <span class="comment"># Links the target library to the log library</span></span><br><span class="line">                       <span class="comment"># included in the NDK.</span></span><br><span class="line">                       <span class="variable">$&#123;log-lib&#125;</span> )</span><br></pre></td></tr></table></figure>
+
 <p><strong>add_library</strong> 表示将你的代码作为库进行链接，<strong>SHARED</strong>表示将此库作为动态链接库，也就是经常看到的so库<br>上面的<strong>find_library</strong>展示了去寻找 DNK 里面的 liblog.so 库，并把名字命名为 <strong>log-lib</strong>，有人会问了，这个liblog.so 文件在哪呀？它就在下面这个目录下</p>
 <blockquote>
 <p>你的NDK目录\platforms\android-L\arch-arm\usr\lib</p>
 </blockquote>
-<p>看，这不就是么<br><img src="1-7.jpg" alt=""></p>
+<p>看，这不就是么<br><img src="1-7.jpg" alt></p>
 <p>最后，将所有的库进行一个归总，统一加入到 native-lib 中，这样在 Java 加入动态库的时候，只需要加入 native-lib 就可以了</p>
-<p>现在来run一把，顺便试试刚刚加入的 liblog.so 能不能正常的打印到 logcat 里面<br>当然得修改 native-lib.cpp 让它打印点东西，修改后代码如下<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;android/log.h&gt;</span></span></div><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGD(format, ...) __android_log_print(ANDROID_LOG_DEBUG, <span class="meta-string">"c_debug"</span>, format, ##__VA_ARGS__)</span></div><div class="line"><span class="function">JNIEXPORT jstring JNICALL</span></div><div class="line"><span class="title">Java_paulyung_myapplication_MainActivity_stringFromJNI</span><span class="params">(</span></div><div class="line">        JNIEnv *env,</div><div class="line">        jobject <span class="comment">/* this */</span>) &#123;</div><div class="line"></div><div class="line">	LOGD(<span class="string">"我来自c++"</span>);</div><div class="line"></div><div class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> hello = <span class="string">"Hello from C++"</span>;</div><div class="line">    <span class="keyword">return</span> env-&gt;NewStringUTF(hello.c_str());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>运行结果如下图所示，完美运行<br><img src="1-8.jpg" alt=""><br><img src="1-9.jpg" alt=""></p>
+<p>现在来run一把，顺便试试刚刚加入的 liblog.so 能不能正常的打印到 logcat 里面<br>当然得修改 native-lib.cpp 让它打印点东西，修改后代码如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;android/log.h&gt;</span></span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGD(format, ...) __android_log_print(ANDROID_LOG_DEBUG, <span class="meta-string">"c_debug"</span>, format, ##__VA_ARGS__)</span></span><br><span class="line">JNIEXPORT jstring JNICALL</span><br><span class="line">Java_paulyung_myapplication_MainActivity_stringFromJNI(</span><br><span class="line">        JNIEnv *env,</span><br><span class="line">        jobject <span class="comment">/* this */</span>) &#123;</span><br><span class="line"></span><br><span class="line">	LOGD(<span class="string">"我来自c++"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> hello = <span class="string">"Hello from C++"</span>;</span><br><span class="line">    <span class="keyword">return</span> env-&gt;NewStringUTF(hello.c_str());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果如下图所示，完美运行<br><img src="1-8.jpg" alt><br><img src="1-9.jpg" alt></p>
 <h2 id="在项目创建后，再引入NDK"><a href="#在项目创建后，再引入NDK" class="headerlink" title="在项目创建后，再引入NDK"></a>在项目创建后，再引入NDK</h2><p>我们有时候是这样的，刚开始没有使用NDK，但在项目深入到某个阶段时候，不得不使用c/c++代码才能解决问题，这个时候需要使用到NDK了。下面就来说说，怎样在一个已有的项目里面引进NDK<br></p>
-<p>首先同样我们新建一个项目，但是不要勾选c++代码支持<br>创建好后，我们手动创建跟刚刚一样的目录结构，并把刚才的 native-lib.cpp 和 CMakeLists.txt 拷贝过来，然后点击工具栏 File -&gt; Link C++ Project with Gradle ，如下图所示<br><img src="2-1.jpg" alt=""></p>
+<p>首先同样我们新建一个项目，但是不要勾选c++代码支持<br>创建好后，我们手动创建跟刚刚一样的目录结构，并把刚才的 native-lib.cpp 和 CMakeLists.txt 拷贝过来，然后点击工具栏 File -&gt; Link C++ Project with Gradle ，如下图所示<br><img src="2-1.jpg" alt></p>
 <p>在弹出的对话框中选择 CMake 方式，并选择刚刚拷贝过来的 CMakeLists.txt 文件，然后点 OK，等一会后，项目就构建好了<br>然后在 MainActivity 里面调用 stringFromJNI() 方法，运行项目，没有什么问题。</p>
-<h2 id="Gradle配置"><a href="#Gradle配置" class="headerlink" title="Gradle配置"></a>Gradle配置</h2><p>首先是 so 文件的存放位置问题，默认 Gradle 会去 <code>项目主Module/src/main/jniLibs</code> 这个目录去找，但这是可以修改的<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">	</div><div class="line">    ...</div><div class="line">    </div><div class="line">    <span class="keyword">sourceSets</span> &#123;</div><div class="line">        main &#123;</div><div class="line">            jniLibs.srcDirs = [<span class="string">'my_cpp/lib'</span>]     <span class="comment">//设置目标的so存放路径</span></div><div class="line">            jni.srcDirs = [] <span class="comment">//disable automatic ndk-build call</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>如果要添加编译参数和限制so的架构，可以使用如下设置<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line"></div><div class="line">	...</div><div class="line">    </div><div class="line">    defaultConfig &#123;</div><div class="line">    </div><div class="line">    	...</div><div class="line">    	externalNativeBuild &#123;</div><div class="line">            cmake &#123;</div><div class="line">                cFlags += <span class="string">"-g -std=c99"</span></div><div class="line">                cFlags += <span class="string">"-DNDEBUG"</span></div><div class="line">                abiFilters <span class="string">'armeabi'</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="Gradle配置"><a href="#Gradle配置" class="headerlink" title="Gradle配置"></a>Gradle配置</h2><p>首先是 so 文件的存放位置问题，默认 Gradle 会去 <code>项目主Module/src/main/jniLibs</code> 这个目录去找，但这是可以修改的</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">	</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">sourceSets</span> &#123;</span><br><span class="line">        main &#123;</span><br><span class="line">            jniLibs.srcDirs = [<span class="string">'my_cpp/lib'</span>]     <span class="comment">//设置目标的so存放路径</span></span><br><span class="line">            jni.srcDirs = [] <span class="comment">//disable automatic ndk-build call</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果要添加编译参数和限制so的架构，可以使用如下设置</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">    </span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">    </span><br><span class="line">    	...</span><br><span class="line">    	externalNativeBuild &#123;</span><br><span class="line">            cmake &#123;</span><br><span class="line">                cFlags += <span class="string">"-g -std=c99"</span></span><br><span class="line">                cFlags += <span class="string">"-DNDEBUG"</span></span><br><span class="line">                abiFilters <span class="string">'armeabi'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这里使用的是 <code>cFlags</code> 指的是c语言的编译参数 ‘-g -std=c99’ 表示支持调试和使用c99标准。如果要添加不同的架构，可以使用 ‘abiFilters’ 去添加。</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>以上就是两种方式引入NDK开发，为大家利用 AS入门NDK提供了一些思路。但是在实际项目里面，可能会有多个 c/c++ 文件，并且还有 .h 头文件等等，这样的话，应该怎样去写 CMakeLists.txt 呢，又有哪些坑呢，请看后续更新。</p>
 
@@ -275,9 +282,9 @@
                 <ul class="list-inline">
 
                     
-                        <li><a href="undefined" target="_blank">PaulYung&#39;s Blog</a></li>
+                        <li><a href="" target="_blank">SeanYang&#39;s Blog</a></li>
                     
-                        <li><a href="undefined" target="_blank">Hux Blog</a></li>
+                        <li><a href="" target="_blank">Hux Blog</a></li>
                     
                         <li><a href="#" target="_blank">Foo</a></li>
                     
@@ -400,7 +407,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; Paul&#39;s Blog 2017 
+                    Copyright &copy; Sean&#39;s Blog 2019 
                     <br>
                     Theme by <a href="http://huangxuan.me">Hux</a> 
                     <span style="display: inline-block; margin: 0 5px;">
