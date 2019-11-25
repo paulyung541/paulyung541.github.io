@@ -90,14 +90,14 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -216,6 +216,7 @@
 <blockquote>
 <p>MongoDB是一个文档数据库，具有所需的可伸缩性和灵活性，可用于所需的查询和索引编制</p>
 </blockquote>
+<p>大家也可以看看官方的文档 <a href="https://docs.mongodb.com/manual/" target="_blank" rel="noopener">https://docs.mongodb.com/manual/</a></p>
 <h1><span id="qu-bie-yu-guan-xi-xing-shu-ju-ku">区别于关系型数据库</span><a href="#qu-bie-yu-guan-xi-xing-shu-ju-ku" class="header-anchor">#</a></h1><p>它是个正儿八经的NoSQL，也就是非关系型数据库。众所周知，现代的数据库系统分为两大阵营，一类属于关系型数据库，比如经常用到的MySQL，Oracle就数据这种数据库。而Redis，MongoDB就属于非关系型数据库。</p>
 <p>如果你熟悉MySQL，你可以和它做一个对比，首先对比下结构吧</p>
 <table>
@@ -275,7 +276,7 @@
 
 <h1><span id="ji-dian-chong-yao-de-zhi-shi">几点重要的知识</span><a href="#ji-dian-chong-yao-de-zhi-shi" class="header-anchor">#</a></h1><ol>
 <li>mongoDB 不用显示地创建 db，如果没有，它会自行创建，collection 也是一样</li>
-<li>mongoDB 服务端默认是只能本地连接的，如果需要外部连接，需要修改配置文件 <code>/etc/mongod.conf</code><br>找到 <code># network interfaces</code>，将下面的 <code>bindIp: 127.0.0.1</code> 修改为 <code>bindIp: 0.0.0.0</code>，改完之后别忘了重启哦，<code>service mongod restart</code></li>
+<li>mongoDB 服务端默认是只能本地连接的，如果需要外部连接，需要修改配置文件 <code>/etc/mongod.conf</code> 找到 <code># network interfaces</code>，将下面的 <code>bindIp: 127.0.0.1</code> 修改为 <code>bindIp: 0.0.0.0</code>，改完之后别忘了重启哦，<code>service mongod restart</code></li>
 </ol>
 
 
@@ -284,6 +285,10 @@
                 
 
                 <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/11/25/写给客户端开发人员的spring-boot傻瓜式入门/" data-toggle="tooltip" data-placement="top" title="写给客户端开发人员的spring boot傻瓜式入门">&larr; Previous Post</a>
+                        </li>
                     
                     
                         <li class="next">
