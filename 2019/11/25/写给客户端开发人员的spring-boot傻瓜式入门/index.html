@@ -220,12 +220,10 @@
 <li>安装好了 IDE，咱们这里统一用 IntelliJ IDEA Community 版（社区版够用了），没装的给你个<a href="https://www.jetbrains.com/idea/download" target="_blank" rel="noopener">传送门</a></li>
 </ol>
 <h2><span id="xin-jian-xiang-mu">新建项目</span><a href="#xin-jian-xiang-mu" class="header-anchor">#</a></h2><p>新建项目<br><img src="01.jpg" alt></p>
-<p>选择maven，然后打钩，从模板创建一个项目结构<br><img src="02.jpg" alt></p>
-<p>选择这个模板，然后next<br><img src="03.jpg" alt></p>
+<p>选择maven，然后不要打钩，直接next<br><img src="02.jpg" alt></p>
 <p>填好这两项，继续next<br><img src="04.jpg" alt></p>
 <p>这里选择我自己装好了的maven，也可以使用idea内置的maven<br><img src="05.jpg" alt></p>
-<p>完成之后，等一会，maven会从远程下载模板并创建，这个过程等一会</p>
-<p>由于这个模板只是创建了个 <code>pom.xml</code>（maven项目的依赖管理文件） 而已，所以我们要自己创建一些目录；创建完成之后如下图<br><img src="06.jpg" alt></p>
+<p>完成之后，等一会，maven会从远程下载模板并创建，这个过程等一会，项目结构如下<br><img src="06.jpg" alt></p>
 <p>可以看到java目录变成了蓝色，表示这是工程源码的根目录，如果没有变成蓝色，选中它点击右键，选择 <code>Mark Directory as</code>，并按下图指示选择<br><img src="07.jpg" alt></p>
 <p>同样的 <code>test</code> 和 <code>resources</code> 目录也需要这样操作一下，但是需要选择相应的选项哈</p>
 <p>至此，项目目录结构建好了，接下来我们修改下 <code>pom.xml</code> 来安装一些依赖</p>
