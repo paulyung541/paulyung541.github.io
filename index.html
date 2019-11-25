@@ -90,14 +90,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -192,15 +192,28 @@
             
         </h3>
         <div class="post-content-preview">
-            MongoDBMongoDB 是啥玩意，下面一句话摘自维基百科
+            
+
+
+
+
+MongoDB
+区别于关系型数据库
+安装
+命令行下简单操作
+
+
+几点重要的知识
+
+
+
+
+
+MongoDB#MongoDB 是啥玩意，下面一句话摘自维基百科
 
 MongoDB是一种面向文档的数据库管理系统，用C++等语言撰写而成，以此来解决应用程序开发社区中的大量现实问题。2007年10月，MongoDB由10gen团队所发展。2009年2月首度推出。
 
-下面是MongoDB官方网站的说明
-
-MongoDB是一个文档数据库，具有所需的可伸缩性和灵活性，可用于所需的查询和索引编制
-
-区......
+下面是MongoDB官方网站......
         </div>
     </a>
     <p class="post-meta">
@@ -221,10 +234,10 @@ MongoDB是一个文档数据库，具有所需的可伸缩性和灵活性，可�
             
         </h3>
         <div class="post-content-preview">
-            OkioOkio 是一个开源库，它补充了 java.io 和 java.nio 的功能，使得数据的获取，存储，操作都变得非常简单。
-ByteStrings 和 BuffersOkio 围绕了下面两种类型进行了包装，将许多操作包装成更直截了当的 API：
+            Okio#Okio 是一个开源库，它补充了 java.io 和 java.nio 的功能，使得数据的获取，存储，操作都变得非常简单。
+ByteStrings 和 Buffers#Okio 围绕了下面两种类型进行了包装，将许多操作包装成更直截了当的 API：
 
-ByteString 是一个不变的字节序列（byte数组）。对于字符数据，String 是最基本的。ByteString 可以说是 Str......
+ByteString 是一个不变的字节序列（byte数组）。对于字符数据，String 是最基本的。ByteString 可以说是 S......
         </div>
     </a>
     <p class="post-meta">
@@ -271,8 +284,8 @@ OKHttp 和 Retrofit2 都是 Square 公司的两大优秀开源产品。OkHttp的
             使用自定义View解决SurfaceView拉伸问题
         </h3>
         <div class="post-content-preview">
-            引子在上一篇博客 自定义Camera（一）里面主要讲解了如何使用自定义 Camera 来进行拍照，详解了 Camera 的初始化与释放，还有拍照之后的存储等。但是细心的朋友便会发现，这个 SurfaceView 里面呈现出来的画面，似乎有些拉伸了的感觉，与我们平时使用的系统相机有很大区别。这到底是为什么呢？
-主要是因为，在一般情况下，Camera 所捕获到的数据，是以横屏为标准的。之前那个例......
+            引子#在上一篇博客 自定义Camera（一）里面主要讲解了如何使用自定义 Camera 来进行拍照，详解了 Camera 的初始化与释放，还有拍照之后的存储等。但是细心的朋友便会发现，这个 SurfaceView 里面呈现出来的画面，似乎有些拉伸了的感觉，与我们平时使用的系统相机有很大区别。这到底是为什么呢？
+主要是因为，在一般情况下，Camera 所捕获到的数据，是以横屏为标准的。之前那个......
         </div>
     </a>
     <p class="post-meta">
@@ -339,13 +352,13 @@ OKHttp 和 Retrofit2 都是 Square 公司的两大优秀开源产品。OkHttp的
             
         </h3>
         <div class="post-content-preview">
-            引子Android入过门的童鞋们都知道，它本身自带的视图有时候是无法满足我们那么多开发需求的，有时候需要我们去自己定义一些视图来丰富手机的交互体验。大家都知道，自定义View无非就是几种情况
+            引子#Android入过门的童鞋们都知道，它本身自带的视图有时候是无法满足我们那么多开发需求的，有时候需要我们去自己定义一些视图来丰富手机的交互体验。大家都知道，自定义View无非就是几种情况
 
 利用已有控件进行组合
 继承 ViewGroup 写布局
 继承 View 画控件
 
-第一种是最简单的，相当于扩展已有功能，一般情况下是不用自己实现测量绘制等的。第二种复杂点，需要自己实现测量和布局，还有......
+第一种是最简单的，相当于扩展已有功能，一般情况下是不用自己实现测量绘制等的。第二种复杂点，需要自己实现测量和布局，还......
         </div>
     </a>
     <p class="post-meta">
@@ -366,10 +379,10 @@ OKHttp 和 Retrofit2 都是 Square 公司的两大优秀开源产品。OkHttp的
             
         </h3>
         <div class="post-content-preview">
-            引子Android NDK有两种方式构建，一种是使用 ndk-build 脚本方式进行构建，另一种就是本文要使用的方式，cmake
+            引子#Android NDK有两种方式构建，一种是使用 ndk-build 脚本方式进行构建，另一种就是本文要使用的方式，cmake
 关于cmake的使用，会另外再写一篇博客进行介绍，本文重点是使用cmake在Android Studio中进行代码构建。
 其中在项目开发中，有可能是中途才引进NDK开发的，这里进行记录，针对一开始使用ndk，和项目中途引进ndk两种方式进行说明。
-创建项目时，便......
+创建项目时，......
         </div>
     </a>
     <p class="post-meta">
@@ -411,6 +424,8 @@ OKHttp 和 Retrofit2 都是 Square 公司的两大优秀开源产品。OkHttp的
                     <div class="tags">
                         
                             
+                        
+                            
                             <a href="/tags/#Android设备" title="Android设备" rel="3">Android设备</a>
                             
                         
@@ -419,11 +434,9 @@ OKHttp 和 Retrofit2 都是 Square 公司的两大优秀开源产品。OkHttp的
                             
                         
                             
+                        
+                            
                             <a href="/tags/#自定义View" title="自定义View" rel="2">自定义View</a>
-                            
-                        
-                            
-                        
                             
                         
                     </div>

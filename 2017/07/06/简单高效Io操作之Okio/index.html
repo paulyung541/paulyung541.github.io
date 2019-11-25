@@ -90,14 +90,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -191,15 +191,15 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="Okio"><a href="#Okio" class="headerlink" title="Okio"></a>Okio</h1><p>Okio 是一个开源库，它补充了 <code>java.io</code> 和 <code>java.nio</code> 的功能，使得数据的获取，存储，操作都变得非常简单。</p>
-<h2 id="ByteStrings-和-Buffers"><a href="#ByteStrings-和-Buffers" class="headerlink" title="ByteStrings 和 Buffers"></a>ByteStrings 和 Buffers</h2><p>Okio 围绕了下面两种类型进行了包装，将许多操作包装成更直截了当的 API：</p>
+                <h1><span id="okio">Okio</span><a href="#okio" class="header-anchor">#</a></h1><p>Okio 是一个开源库，它补充了 <code>java.io</code> 和 <code>java.nio</code> 的功能，使得数据的获取，存储，操作都变得非常简单。</p>
+<h2><span id="bytestrings-he-buffers">ByteStrings 和 Buffers</span><a href="#bytestrings-he-buffers" class="header-anchor">#</a></h2><p>Okio 围绕了下面两种类型进行了包装，将许多操作包装成更直截了当的 API：</p>
 <ul>
 <li><a href="http://square.github.io/okio/1.x/okio/okio/ByteString.html" target="_blank" rel="noopener">ByteString</a> 是一个不变的字节序列（byte数组）。对于字符数据，<code>String</code> 是最基本的。<code>ByteString</code> 可以说是 String 久违的兄弟，它能很方便地操作二进制数据。这个类符合人们的操作习惯和需求：它能够很便捷的将自身编解码成 十六进制String，base64 和 utf-8格式。</li>
 <li><a href="http://square.github.io/okio/1.x/okio/okio/Buffer.html" target="_blank" rel="noopener">Buffer</a> 是一个可变的字节序列。就像 <code>ArrayList</code> 一样，你不需要事先指定它的大小。你可以像队列一样读写这个缓存：在尾部写数据，这头部读数据。你都不需要去管理数据位置，限制和容量大小。</li>
 </ul>
 <p><code>ByteString</code> 和 <code>Buffer</code> 能够很好的节省 CPU 和内存资源。如果将 <code>utf-8</code> 的字符串编码成 <code>ByteString</code>，它缓存了一个字符串的引用，当你要对它进行解码的时候，它就将这个字符串引用再还给你，所以事实上解码过程啥也没做，就是将原来的字符串再还给你（空间换时间）。</p>
 <p><code>Buffer</code> 是由一条双向循环链表实现的。当你将数据从一个 buffer 移动到另一个的时候，它重新分配片段的所有者，而不是将数据拷贝过去。这个方法对于多线程程序特别有帮助：一个维持网络会话的线程能够和一个工作线程进行无拷贝的数据交换。</p>
-<h2 id="Sources-和-Sinks"><a href="#Sources-和-Sinks" class="headerlink" title="Sources 和 Sinks"></a>Sources 和 Sinks</h2><p>一个 <code>java.io</code> 的优雅设计部分是使流能够进行分层变换，像加密和压缩这些。<code>Okio</code> 有自己的流类型，分别叫做 <a href="http://square.github.io/okio/1.x/okio/okio/Source.html" target="_blank" rel="noopener">Source</a> 和 <a href="http://square.github.io/okio/1.x/okio/okio/Sink.html" target="_blank" rel="noopener">Sink</a>.它们分别类似于 <code>InputStream</code> 和 <code>OutputStream</code>，但是有许多关键的不同点：</p>
+<h2><span id="sources-he-sinks">Sources 和 Sinks</span><a href="#sources-he-sinks" class="header-anchor">#</a></h2><p>一个 <code>java.io</code> 的优雅设计部分是使流能够进行分层变换，像加密和压缩这些。<code>Okio</code> 有自己的流类型，分别叫做 <a href="http://square.github.io/okio/1.x/okio/okio/Source.html" target="_blank" rel="noopener">Source</a> 和 <a href="http://square.github.io/okio/1.x/okio/okio/Sink.html" target="_blank" rel="noopener">Sink</a>.它们分别类似于 <code>InputStream</code> 和 <code>OutputStream</code>，但是有许多关键的不同点：</p>
 <ul>
 <li><strong>Timeouts</strong>： 该流提供了获取超时的IO机制。不像 <code>java.io</code> 的套接字流，<code>read()</code> 和 <code>write()</code> 调用超时执行</li>
 <li><strong>简单实现</strong>：<code>Sources</code> 声明了三个方法：read()，close()，和 timeout().这不会像 <code>available()</code> 或者单字节读取从而造成令人惊奇的结果。</li>
@@ -208,11 +208,11 @@
 <li>测试简单：<code>Buffer</code> 类实现了 <code>BufferedSource</code> 和 <code>BufferedSink</code>，所以你的测试代码非常简单简洁。</li>
 </ul>
 <p><code>Sources</code> 和 <code>Sinks</code> 交互就像 <code>InputStream</code> 和 <code>OutputStream</code>.你可以把任何 <code>Sources</code> 当作 <code>InputStream</code>，并且也能将任何 <code>InputStream</code> 当作 <code>Sources</code>.<code>Sink</code> 和 <code>OutputStream</code> 也是一样。</p>
-<h2 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h2><p>Okio 设计之初是服务于 OKHttp 的压缩，一个在Android端胜任 HTTP + SPDY 的客户端。它已经做好准备去解决新的问题了。</p>
-<h2 id="例子：一个-PNG-图片解码器"><a href="#例子：一个-PNG-图片解码器" class="headerlink" title="例子：一个 PNG 图片解码器"></a>例子：一个 PNG 图片解码器</h2><p>一个解析 PNG 图片文件数据块的练习。</p>
+<h2><span id="ke-kao-xing">可靠性</span><a href="#ke-kao-xing" class="header-anchor">#</a></h2><p>Okio 设计之初是服务于 OKHttp 的压缩，一个在Android端胜任 HTTP + SPDY 的客户端。它已经做好准备去解决新的问题了。</p>
+<h2><span id="li-zi-yi-ge-png-tu-pian-jie-ma-qi">例子：一个 PNG 图片解码器</span><a href="#li-zi-yi-ge-png-tu-pian-jie-ma-qi" class="header-anchor">#</a></h2><p>一个解析 PNG 图片文件数据块的练习。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ByteString PNG_HEADER = ByteString.decodeHex(<span class="string">"89504e470d0a1a0a"</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">decodePng</span><span class="params">(InputStream in)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> (BufferedSource pngSource = Okio.buffer(Okio.source(in))) &#123;</span><br><span class="line">    ByteString header = pngSource.readByteString(PNG_HEADER.size());</span><br><span class="line">    <span class="keyword">if</span> (!header.equals(PNG_HEADER)) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">"Not a PNG."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">      Buffer chunk = <span class="keyword">new</span> Buffer();</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Each chunk is a length, type, data, and CRC offset.</span></span><br><span class="line">      <span class="keyword">int</span> length = pngSource.readInt();</span><br><span class="line">      String type = pngSource.readUtf8(<span class="number">4</span>);</span><br><span class="line">      pngSource.readFully(chunk, length);</span><br><span class="line">      <span class="keyword">int</span> crc = pngSource.readInt();</span><br><span class="line"></span><br><span class="line">      decodeChunk(type, chunk);</span><br><span class="line">      <span class="keyword">if</span> (type.equals(<span class="string">"IEND"</span>)) <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">decodeChunk</span><span class="params">(String type, Buffer chunk)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (type.equals(<span class="string">"IHDR"</span>)) &#123;</span><br><span class="line">    <span class="keyword">int</span> width = chunk.readInt();</span><br><span class="line">    <span class="keyword">int</span> height = chunk.readInt();</span><br><span class="line">    System.out.printf(<span class="string">"%08x: %s %d x %d%n"</span>, chunk.size(), type, width, height);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    System.out.printf(<span class="string">"%08x: %s%n"</span>, chunk.size(), type);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h1 id="Okio-强制向下兼容的字节"><a href="#Okio-强制向下兼容的字节" class="headerlink" title="Okio 强制向下兼容的字节"></a>Okio 强制向下兼容的字节</h1><p>Okio 的 <code>BufferedSink</code> 是一个高度抽象的类，用于以字节形式写二进制流和字符流。它设计的初衷是为了替代难用的 JDK 的 <code>java.io.*</code> 和 <code>java.nio.*</code>.如果你没有看过 Okio 的源码，你不会了解 segment 概念的存在。它实现了性能的细节，这对调用者来说是透明的。唯一的例外就是 <code>BufferedSink</code> 的 <code>emitCompleteSegments()</code> 方法。</p>
+<h1><span id="okio-qiang-zhi-xiang-xia-jian-rong-de-zi-jie">Okio 强制向下兼容的字节</span><a href="#okio-qiang-zhi-xiang-xia-jian-rong-de-zi-jie" class="header-anchor">#</a></h1><p>Okio 的 <code>BufferedSink</code> 是一个高度抽象的类，用于以字节形式写二进制流和字符流。它设计的初衷是为了替代难用的 JDK 的 <code>java.io.*</code> 和 <code>java.nio.*</code>.如果你没有看过 Okio 的源码，你不会了解 segment 概念的存在。它实现了性能的细节，这对调用者来说是透明的。唯一的例外就是 <code>BufferedSink</code> 的 <code>emitCompleteSegments()</code> 方法。</p>
 <p>这个方法是使字节流向 <code>Sink</code> 的三个方法的其中一部分。它们的区别很微妙，理解它有助于正确的使用和提高吞吐量。</p>
 <p>我们先来看看它们在表现行为上有何不同吧，然后看看每一个是怎样使用的。</p>
 <hr>

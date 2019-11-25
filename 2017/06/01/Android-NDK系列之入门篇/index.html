@@ -90,14 +90,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -191,10 +191,10 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>Android NDK有两种方式构建，一种是使用 ndk-build 脚本方式进行构建，另一种就是本文要使用的方式，cmake</p>
+                <h1><span id="yin-zi">引子</span><a href="#yin-zi" class="header-anchor">#</a></h1><p>Android NDK有两种方式构建，一种是使用 ndk-build 脚本方式进行构建，另一种就是本文要使用的方式，cmake</p>
 <p>关于cmake的使用，会另外再写一篇博客进行介绍，本文重点是使用cmake在Android Studio中进行代码构建。</p>
 <p>其中在项目开发中，有可能是中途才引进NDK开发的，这里进行记录，针对一开始使用ndk，和项目中途引进ndk两种方式进行说明。</p>
-<h2 id="创建项目时，便引入NDK"><a href="#创建项目时，便引入NDK" class="headerlink" title="创建项目时，便引入NDK"></a>创建项目时，便引入NDK</h2><blockquote>
+<h2><span id="chuang-jian-xiang-mu-shi-bian-yin-ru-ndk">创建项目时，便引入NDK</span><a href="#chuang-jian-xiang-mu-shi-bian-yin-ru-ndk" class="header-anchor">#</a></h2><blockquote>
 <p>这种方式是从头开始一个NDK项目，也是大部分博客写入门NDK的一个内容，虽然这个不是本文重点，但是也把过程梳理一遍。</p>
 </blockquote>
 <p>新建项目，并选中对c++的支持<br><img src="1-1.png" alt></p>
@@ -215,17 +215,17 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;android/log.h&gt;</span></span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGD(format, ...) __android_log_print(ANDROID_LOG_DEBUG, <span class="meta-string">"c_debug"</span>, format, ##__VA_ARGS__)</span></span><br><span class="line">JNIEXPORT jstring JNICALL</span><br><span class="line">Java_paulyung_myapplication_MainActivity_stringFromJNI(</span><br><span class="line">        JNIEnv *env,</span><br><span class="line">        jobject <span class="comment">/* this */</span>) &#123;</span><br><span class="line"></span><br><span class="line">	LOGD(<span class="string">"我来自c++"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> hello = <span class="string">"Hello from C++"</span>;</span><br><span class="line">    <span class="keyword">return</span> env-&gt;NewStringUTF(hello.c_str());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>运行结果如下图所示，完美运行<br><img src="1-8.jpg" alt><br><img src="1-9.jpg" alt></p>
-<h2 id="在项目创建后，再引入NDK"><a href="#在项目创建后，再引入NDK" class="headerlink" title="在项目创建后，再引入NDK"></a>在项目创建后，再引入NDK</h2><p>我们有时候是这样的，刚开始没有使用NDK，但在项目深入到某个阶段时候，不得不使用c/c++代码才能解决问题，这个时候需要使用到NDK了。下面就来说说，怎样在一个已有的项目里面引进NDK<br></p>
+<h2><span id="zai-xiang-mu-chuang-jian-hou-zai-yin-ru-ndk">在项目创建后，再引入NDK</span><a href="#zai-xiang-mu-chuang-jian-hou-zai-yin-ru-ndk" class="header-anchor">#</a></h2><p>我们有时候是这样的，刚开始没有使用NDK，但在项目深入到某个阶段时候，不得不使用c/c++代码才能解决问题，这个时候需要使用到NDK了。下面就来说说，怎样在一个已有的项目里面引进NDK<br></p>
 <p>首先同样我们新建一个项目，但是不要勾选c++代码支持<br>创建好后，我们手动创建跟刚刚一样的目录结构，并把刚才的 native-lib.cpp 和 CMakeLists.txt 拷贝过来，然后点击工具栏 File -&gt; Link C++ Project with Gradle ，如下图所示<br><img src="2-1.jpg" alt></p>
 <p>在弹出的对话框中选择 CMake 方式，并选择刚刚拷贝过来的 CMakeLists.txt 文件，然后点 OK，等一会后，项目就构建好了<br>然后在 MainActivity 里面调用 stringFromJNI() 方法，运行项目，没有什么问题。</p>
-<h2 id="Gradle配置"><a href="#Gradle配置" class="headerlink" title="Gradle配置"></a>Gradle配置</h2><p>首先是 so 文件的存放位置问题，默认 Gradle 会去 <code>项目主Module/src/main/jniLibs</code> 这个目录去找，但这是可以修改的</p>
+<h2><span id="gradle-pei-zhi">Gradle配置</span><a href="#gradle-pei-zhi" class="header-anchor">#</a></h2><p>首先是 so 文件的存放位置问题，默认 Gradle 会去 <code>项目主Module/src/main/jniLibs</code> 这个目录去找，但这是可以修改的</p>
 <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">	</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">sourceSets</span> &#123;</span><br><span class="line">        main &#123;</span><br><span class="line">            jniLibs.srcDirs = [<span class="string">'my_cpp/lib'</span>]     <span class="comment">//设置目标的so存放路径</span></span><br><span class="line">            jni.srcDirs = [] <span class="comment">//disable automatic ndk-build call</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>如果要添加编译参数和限制so的架构，可以使用如下设置</p>
 <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">    </span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">    </span><br><span class="line">    	...</span><br><span class="line">    	externalNativeBuild &#123;</span><br><span class="line">            cmake &#123;</span><br><span class="line">                cFlags += <span class="string">"-g -std=c99"</span></span><br><span class="line">                cFlags += <span class="string">"-DNDEBUG"</span></span><br><span class="line">                abiFilters <span class="string">'armeabi'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这里使用的是 <code>cFlags</code> 指的是c语言的编译参数 ‘-g -std=c99’ 表示支持调试和使用c99标准。如果要添加不同的架构，可以使用 ‘abiFilters’ 去添加。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>以上就是两种方式引入NDK开发，为大家利用 AS入门NDK提供了一些思路。但是在实际项目里面，可能会有多个 c/c++ 文件，并且还有 .h 头文件等等，这样的话，应该怎样去写 CMakeLists.txt 呢，又有哪些坑呢，请看后续更新。</p>
+<h1><span id="zong-jie">总结</span><a href="#zong-jie" class="header-anchor">#</a></h1><p>以上就是两种方式引入NDK开发，为大家利用 AS入门NDK提供了一些思路。但是在实际项目里面，可能会有多个 c/c++ 文件，并且还有 .h 头文件等等，这样的话，应该怎样去写 CMakeLists.txt 呢，又有哪些坑呢，请看后续更新。</p>
 
 
                 <hr>
